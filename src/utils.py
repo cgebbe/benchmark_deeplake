@@ -41,6 +41,7 @@ def check_env_vars():
         "AWS_DEFAULT_REGION",
         "S3_BUCKET_NAME",
         "S3_PREFIX",
+        "DEEPLAKE_PATH",
     }
     missing_keys = required_env_keys.difference(os.environ)
     if missing_keys:

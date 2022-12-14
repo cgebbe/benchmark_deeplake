@@ -21,11 +21,14 @@ Then, run
 ```bash
 # benchmark dataset iteration speed
 python -m src create_png_dataset --upload true
-python -m src benchmark_png_dataset LOCAL_TF_IO
-python -m src benchmark_png_dataset LOCAL_PIL
-python -m src benchmark_png_dataset DEEPLAKE
-python -m src benchmark_png_dataset DEEPLAKE_FAST
-python -m src benchmark_png_dataset DEEPLAKE_TORCH
+
+# To test the fast C++ loader, you need to connect the dataset to Deep Lake in the UI,
+# see https://docs.activeloop.ai/storage-and-credentials/managed-credentials
+
+# benchmark dataset iteration speed
+python -m src benchmark_png_dataset <dataset_type>
+
+, where <dataset_type> is one of DEEPLAKE_TF,DEEPLAKE_TF_FAST,DEEPLAKE_TORCH,DEEPLAKE_TORCH_FAST,LOCAL_TF_PIL,LOCAL_TF_IO
 
 # benchmark
 python -m src create_large_file --upload true
