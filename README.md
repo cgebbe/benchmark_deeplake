@@ -24,6 +24,8 @@ python -m src create_png_dataset --upload true
 python -m src benchmark_png_dataset LOCAL_TF_IO
 python -m src benchmark_png_dataset LOCAL_PIL
 python -m src benchmark_png_dataset DEEPLAKE
+python -m src benchmark_png_dataset DEEPLAKE_FAST
+python -m src benchmark_png_dataset DEEPLAKE_TORCH
 
 # benchmark
 python -m src create_large_file --upload true
@@ -63,6 +65,72 @@ Average network download speed of 32.796 MB/s
  'fastest_080%': 5.86794075040542,
  'fastest_090%': 5.473526373542395,
  'fastest_100%': 5.036806951371547}
+
+# DEEPLAKE_TORCH WITH 2 WORKERS
+Average network download speed of 105.221 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 71.03030989460096,
+ 'fastest_080%': 13.434375749102742,
+ 'fastest_090%': 10.428007032120984,
+ 'fastest_100%': 8.136889988358998}
+
+# DEEPLAKE_TORCH WITH 8 WORKERS
+Average network download speed of 574.021 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 1425.8308925312817,
+ 'fastest_080%': 59.240661515145945,
+ 'fastest_090%': 24.860454092616912,
+ 'fastest_100%': 10.786872859144813}
+
+
+# DEEPLAKE_TORCH_FAST WITH 2 WORKERS
+Average network download speed of 132.805 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 52.879918585452494,
+ 'fastest_080%': 15.823851421710934,
+ 'fastest_090%': 12.558904732617254,
+ 'fastest_100%': 10.189517706242173}
+
+# DEEPLAKE_TORCH_FAST WITH 4 WORKERS (recommended by deeplake lib)
+Average network download speed of 294.941 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 2780.2772386437155,
+ 'fastest_080%': 45.71588514046043,
+ 'fastest_090%': 18.538429777091956,
+ 'fastest_095%': 14.711939092086698,
+ 'fastest_098%': 12.724920817866078,
+ 'fastest_099%': 12.251549112879632,
+ 'fastest_100%': 11.176130240816159}
+
+
+# DEEPLAKE_TORCH_FAST WITH 8 WORKERS
+Average network download speed of 572.419 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 2297.58404143897,
+ 'fastest_080%': 918.5837665117919,
+ 'fastest_090%': 50.19128639455475,
+ 'fastest_095%': 19.681063008997892,
+ 'fastest_098%': 13.894113122655455,
+ 'fastest_099%': 12.896967839142068,
+ 'fastest_100%': 10.664840590445777}
+
+
+# DEEPLAKE_TORCH_FAST WITH 16 WORKERS
+Average network download speed of 767.680 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 1039.6186457482333,
+ 'fastest_080%': 325.205012012097,
+ 'fastest_090%': 155.04550152553452,
+ 'fastest_095%': 26.40634880796745,
+ 'fastest_098%': 11.20506356752272,
+ 'fastest_099%': 9.774871581296054,
+ 'fastest_100%': 7.122003009553231}
 ```
 
 ## Using our local NVIDIA DGX A100

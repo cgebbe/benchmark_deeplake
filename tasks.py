@@ -7,3 +7,4 @@ def pin_requirements(c):
     c.run("rm reqs.in reqs.txt || echo nothing-to-delete")
     c.run("pipreqs --savepath reqs.in .")
     c.run("pip-compile --verbose --output-file reqs.txt reqs.in")
+    c.run("pip install -r reqs.txt")

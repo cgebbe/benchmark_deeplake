@@ -4,9 +4,9 @@ physical_devices = tf.config.list_physical_devices("GPU")
 for device in physical_devices:
     tf.config.experimental.set_memory_growth(device, True)
 
-
 import os
 import time
+from enum import Enum
 from pathlib import Path
 from pprint import pprint
 
@@ -16,12 +16,14 @@ import tensorflow as tf
 import tqdm
 from PIL import Image
 
-from src.utils import check_env_vars, measure_network_speed
+from src import utils
 
-check_env_vars()
+utils.check_env_vars()
 REPO_DIRPATH = Path(__file__).parents[1]
 DATA_DIRPATH = REPO_DIRPATH / "data/pngs"
 DEEPLAKE_PATH = f"s3://{os.environ['S3_BUCKET_NAME']}/{os.environ['S3_PREFIX']}"
+BATCH_SIZE = 32
+NUM_WORKER = 8
 
 
 def _create_pngs(
@@ -59,18 +61,41 @@ def create_png_dataset(upload=True):
         _upload_dataset()
 
 
-from enum import Enum
-
-
 class DatasetType(Enum):
-    DEEPLAKE = 1
-    LOCAL_TF_IO = 2
-    LOCAL_PIL = 3
+    DEEPLAKE_TF = 1
+    DEEPLAKE_TF_FAST = 2
+    DEEPLAKE_TORCH = 3
+    DEEPLAKE_TORCH_FAST = 3
+    LOCAL_TF_PIL = 4
+    LOCAL_TF_IO = 5
 
 
-def _get_deeplake_ds() -> tf.data.Dataset:
+def _get_deeplake_ds(ds_type: DatasetType) -> tf.data.Dataset:
     deeplake_ds = deeplake.load(DEEPLAKE_PATH)
-    return deeplake_ds.tensorflow()
+    print(type(deeplake_ds))
+    if ds_type == DatasetType.DEEPLAKE_TF:
+        return deeplake_ds.tensorflow()
+    elif ds_type == DatasetType.DEEPLAKE_TF_FAST:
+        return deeplake_ds.dataloader().tensorflow()
+    elif ds_type == DatasetType.DEEPLAKE_TORCH:
+        return deeplake_ds.pytorch(
+            batch_size=BATCH_SIZE,
+            num_workers=NUM_WORKER,
+            drop_last=True,
+            pin_memory=False,
+        )
+    elif ds_type == DatasetType.DEEPLAKE_TORCH_FAST:
+        return (
+            deeplake_ds.dataloader()
+            .batch(BATCH_SIZE)
+            .pytorch(
+                num_worker=NUM_WORKER,
+                drop_last=True,
+                pin_memory=False,
+            )
+        )
+
+    raise ValueError
 
 
 def _get_local_ds(ds_type: DatasetType) -> tf.data.Dataset:
@@ -86,7 +111,7 @@ def _get_local_ds(ds_type: DatasetType) -> tf.data.Dataset:
         return tf.io.decode_image(image, channels=0)
 
     load_func = {
-        DatasetType.LOCAL_PIL: load_image_pil,
+        DatasetType.LOCAL_TF_PIL: load_image_pil,
         DatasetType.LOCAL_TF_IO: load_image_tf,
     }[ds_type]
 
@@ -95,38 +120,27 @@ def _get_local_ds(ds_type: DatasetType) -> tf.data.Dataset:
     return ds.map(load_func)
 
 
-def benchmark_png_dataset(
-    ds_type: DatasetType, batch_size: int = 32, batch_count: int = 250
-):
-    if ds_type == DatasetType.DEEPLAKE:
-        ds = _get_deeplake_ds()
+def benchmark_png_dataset(ds_type: DatasetType, batch_count: int = 250):
+    if ds_type.name.startswith("DEEPLAKE"):
+        ds = _get_deeplake_ds(ds_type)
     else:
         ds = _get_local_ds(ds_type)
 
-    if batch_size > 1:
-        ds = ds.batch(batch_size, drop_remainder=True)
+    if not ds_type == DatasetType.DEEPLAKE_TORCH:
+        ds = ds.batch(batch_size=BATCH_SIZE, drop_remainder=True)
 
-    durations = []
-    with measure_network_speed():
-        last_t = time.time()
+    watch = utils.StopWatch()
+    with utils.measure_network_speed():
         for _, elem in tqdm.tqdm(zip(range(batch_count), ds), total=batch_count):
-            current_t = time.time()
-            durations.append(current_t - last_t)
-            last_t = current_t
+            watch.stop()
 
     try:
         # for deeplake dataset
         tensor = elem["images"]
     except TypeError:
-        # for png dataset
+        # for PNG dataset
         tensor = elem
-    assert isinstance(tensor, tf.Tensor)
     print(tensor.shape)
     print(tensor.dtype)
 
-    durations.sort()
-    iterations_per_second = {
-        f"fastest_{x:03d}%": 1 / np.mean(durations[0 : int(x / 100 * len(durations))])
-        for x in [50, 80, 90, 100]
-    }
-    pprint(iterations_per_second)
+    watch.evaluate()
