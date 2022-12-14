@@ -1,3 +1,4 @@
+import os
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -31,6 +32,14 @@ def measure_network_speed():
         print(f"Average network download speed of {speed:.3f} MB/s")
 
 
-if __name__ == "__main__":
-    with measure_network_speed():
-        time.sleep(5)
+def check_env_vars():
+    required_env_keys = {
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_DEFAULT_REGION",
+        "S3_BUCKET_NAME",
+        "S3_PREFIX",
+    }
+    missing_keys = required_env_keys.difference(os.environ)
+    if missing_keys:
+        raise ValueError(f"Please provide {missing_keys=}")

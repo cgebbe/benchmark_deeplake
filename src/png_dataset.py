@@ -16,19 +16,9 @@ import tensorflow as tf
 import tqdm
 from PIL import Image
 
-from src.utils import measure_network_speed
+from src.utils import check_env_vars, measure_network_speed
 
-required_env_keys = {
-    "AWS_ACCESS_KEY_ID",
-    "AWS_SECRET_ACCESS_KEY",
-    "AWS_DEFAULT_REGION",
-    "S3_BUCKET_NAME",
-    "S3_PREFIX",
-}
-missing_keys = required_env_keys.difference(os.environ)
-if missing_keys:
-    raise ValueError(f"Please provide {missing_keys=}")
-
+check_env_vars()
 REPO_DIRPATH = Path(__file__).parents[1]
 DATA_DIRPATH = REPO_DIRPATH / "data/pngs"
 DEEPLAKE_PATH = f"s3://{os.environ['S3_BUCKET_NAME']}/{os.environ['S3_PREFIX']}"

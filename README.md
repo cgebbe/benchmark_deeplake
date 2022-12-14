@@ -19,13 +19,20 @@ export S3_PREFIX=...
 Then, run
 
 ```bash
+# benchmark dataset iteration speed
 python -m src create_png_dataset --upload true
 python -m src benchmark_png_dataset LOCAL_TF_IO
 python -m src benchmark_png_dataset LOCAL_PIL
 python -m src benchmark_png_dataset DEEPLAKE
+
+# benchmark
+python -m src create_large_file --upload true
+python -m src benchmark_s3_download
 ```
 
-# Results
+# Results dataset
+
+Values represent iterations per second, therefore the higher the better.
 
 ## Using r6i.xlarge EC2 instance in same region as S3 bucket
 
@@ -60,8 +67,6 @@ Average network download speed of 32.796 MB/s
 
 ## Using our local NVIDIA DGX A100
 
-Values represent iterations per second, therefore the higher the better.
-
 ```bash
 # LOCAL_TF_IO
 Average network download speed of 0.021 MB/s
@@ -89,4 +94,10 @@ Average network download speed of 49.869 MB/s
  'fastest_080%': 4.268199899730012,
  'fastest_090%': 4.058714611178034,
  'fastest_100%': 3.7857384725578402}
+```
+
+## s3 download speed
+
+```
+Average network download speed of 278.114 MB/s
 ```
