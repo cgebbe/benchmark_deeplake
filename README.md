@@ -39,6 +39,58 @@ python -m src benchmark_s3_download
 
 Values represent batches per second, therefore the higher the better.
 
+## Using p3.16xlarge EC2 instance in same region as S3 bucket
+
+```bash
+# LOCAL_TF_IO
+Average network download speed of 0.005 MB/s
+(32, 256, 256, 3)
+<dtype: 'uint8'>
+{'fastest_050%': 1976.7370838030533,
+ 'fastest_080%': 953.2584918289123,
+ 'fastest_090%': 782.3131214157462,
+ 'fastest_095%': 712.142163356041,
+ 'fastest_098%': 658.5536492018692,
+ 'fastest_099%': 643.46317670449,
+ 'fastest_100%': 560.0356345916175}
+
+# LOCAL TF_PIL
+Average network download speed of 0.003 MB/s
+(32, 256, 256, 3)
+<dtype: 'uint8'>
+{'fastest_050%': 15.622719058374555,
+ 'fastest_080%': 15.416921506191692,
+ 'fastest_090%': 15.35995150015314,
+ 'fastest_095%': 15.332037784814702,
+ 'fastest_098%': 15.312128769852094,
+ 'fastest_099%': 15.306560207943665,
+ 'fastest_100%': 15.263525352712174}
+
+# DEEPLAKE_TORCH_FAST WITH 0 WORKERS
+Average network download speed of 243.532 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 108.3666643034766,
+ 'fastest_080%': 56.17683410632269,
+ 'fastest_090%': 47.459144668815604,
+ 'fastest_095%': 43.51762138528615,
+ 'fastest_098%': 40.41428631713758,
+ 'fastest_099%': 39.30880872266768,
+ 'fastest_100%': 32.68293856701203}
+
+# DEEPLAKE_TORCH_FAST WITH 4 WORKERS
+Average network download speed of 244.798 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 113.99926984873171,
+ 'fastest_080%': 57.01765189671227,
+ 'fastest_090%': 47.890749714383965,
+ 'fastest_095%': 43.75836789329342,
+ 'fastest_098%': 40.95868249135959,
+ 'fastest_099%': 40.15088960005184,
+ 'fastest_100%': 32.89305218906767}
+```
+
 ## Using r6i.xlarge EC2 instance in same region as S3 bucket
 
 ```bash
