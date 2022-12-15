@@ -71,6 +71,7 @@ class DatasetType(enum.Enum):
 
 def _get_deeplake_ds(ds_type: DatasetType) -> tf.data.Dataset:
     deeplake_ds = deeplake.load(DEEPLAKE_PATH_HUB)
+    # deeplake_ds = deeplake.load("hub://activeloop/coco-train")
 
     if ds_type == DatasetType.DEEPLAKE_TF:
         return deeplake_ds.tensorflow().batch(
@@ -91,7 +92,11 @@ def _get_deeplake_ds(ds_type: DatasetType) -> tf.data.Dataset:
             # decode_method={"images": "pil"},
         )
     elif ds_type == DatasetType.DEEPLAKE_TORCH_FAST:
-        return deeplake_ds.dataloader().batch(BATCH_SIZE, drop_last=True).pytorch()
+        return (
+            deeplake_ds.dataloader()
+            .batch(BATCH_SIZE, drop_last=True)
+            .pytorch(tensors=["images"])
+        )
 
     raise ValueError
 
