@@ -1,4 +1,5 @@
 import tensorflow as tf
+import pandas as pd
 
 physical_devices = tf.config.list_physical_devices("GPU")
 for device in physical_devices:
