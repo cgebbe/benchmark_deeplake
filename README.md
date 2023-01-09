@@ -197,14 +197,53 @@ Average network download speed of 0.014 MB/s
  'fastest_090%': 24.079841144019444,
  'fastest_100%': 23.523043868093495}
 
-# DEEPLAKE
-Average network download speed of 49.869 MB/s
+# DEEPLAKE_TF
+Average network download speed of 45.346 MB/s
 (32, 256, 256, 3)
 <dtype: 'uint8'>
-{'fastest_050%': 5.319442793318664,
- 'fastest_080%': 4.268199899730012,
- 'fastest_090%': 4.058714611178034,
- 'fastest_100%': 3.7857384725578402}
+{'fastest_050%': 4.914964020289975,
+ 'fastest_080%': 3.89927152728439,
+ 'fastest_090%': 3.678534402552293,
+ 'fastest_095%': 3.5770765443820767,
+ 'fastest_098%': 3.4979817114766973,
+ 'fastest_099%': 3.4718777683362108,
+ 'fastest_100%': 3.4104080314208867}
+
+# DEEPLAKE_TF_FAST
+Average network download speed of 155.121 MB/s
+(32, 256, 256, 3)
+<dtype: 'uint8'>
+{'fastest_050%': 346.6277563752075,
+ 'fastest_080%': 311.6278776031654,
+ 'fastest_090%': 135.47324344355735,
+ 'fastest_095%': 38.66436844370022,
+ 'fastest_098%': 20.745911598454416,
+ 'fastest_099%': 17.575421037203427,
+ 'fastest_100%': 10.783028248026104}
+
+# DEEPLAKE_TORCH
+Average network download speed of 42.598 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 4.702582898285127,
+ 'fastest_080%': 3.7142903267664673,
+ 'fastest_090%': 3.532716813833815,
+ 'fastest_095%': 3.435927490551217,
+ 'fastest_098%': 3.3391636622746255,
+ 'fastest_099%': 3.3091902486482088,
+ 'fastest_100%': 3.2202134235313467}
+
+# DEEPLAKE_TORCH_FAST
+Average network download speed of 170.874 MB/s
+torch.Size([32, 256, 256, 3])
+torch.uint8
+{'fastest_050%': 464.362485596285,
+ 'fastest_080%': 332.8246104135447,
+ 'fastest_090%': 89.66712264222204,
+ 'fastest_095%': 36.77564181085242,
+ 'fastest_098%': 19.099987104405137,
+ 'fastest_099%': 15.790479786107685,
+ 'fastest_100%': 11.959503550853999}
 ```
 
 ## s3 download speed
@@ -212,3 +251,7 @@ Average network download speed of 49.869 MB/s
 ```
 Average network download speed of 278.114 MB/s
 ```
+
+## TF_FAST error at the end
+
+[1] 4008490 segmentation fault (core dumped) python -m src benchmark_png_dataset DEEPLAKE_TF_FAST

@@ -79,11 +79,7 @@ def _get_deeplake_ds(ds_type: DatasetType) -> tf.data.Dataset:
             batch_size=BATCH_SIZE, drop_remainder=True
         )
     elif ds_type == DatasetType.DEEPLAKE_TF_FAST:
-        return (
-            deeplake_ds.dataloader()
-            .tensorflow()
-            .batch(batch_size=BATCH_SIZE, drop_remainder=True)
-        )
+        return deeplake_ds.dataloader().tensorflow().batch(batch_size=BATCH_SIZE)
     elif ds_type == DatasetType.DEEPLAKE_TORCH:
         return deeplake_ds.pytorch(
             batch_size=BATCH_SIZE,
